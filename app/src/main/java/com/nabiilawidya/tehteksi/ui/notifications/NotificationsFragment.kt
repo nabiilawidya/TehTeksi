@@ -29,10 +29,13 @@ class NotificationsFragment : Fragment() {
         val root: View = binding.root
 
         binding.buttonLogout.setOnClickListener {
+            com.google.firebase.auth.FirebaseAuth.getInstance().signOut()
+
             val intent = Intent(requireContext(), LoginActivity::class.java)
             startActivity(intent)
             requireActivity().finish()
         }
+
 
         return root
     }

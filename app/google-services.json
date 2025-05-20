@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "482731699178",
+    "project_id": "tehteksi",
+    "storage_bucket": "tehteksi.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:482731699178:android:074ae98d64321b10c4a093",
+        "android_client_info": {
+          "package_name": "com.nabiilawidya.tehteksi"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCtDS5vULQyB4xeJ5-bf0Ff0TZePq-LEZk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
