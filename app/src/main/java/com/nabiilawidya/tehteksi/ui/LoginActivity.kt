@@ -6,9 +6,13 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.nabiilawidya.tehteksi.databinding.ActivityLoginBinding
 import com.nabiilawidya.tehteksi.databinding.LayoutLoginBinding
 import com.nabiilawidya.tehteksi.databinding.LayoutRegisterBinding
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class LoginActivity : AppCompatActivity() {
 
@@ -16,10 +20,13 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var loginBinding: LayoutLoginBinding
     private lateinit var registerBinding: LayoutRegisterBinding
     private lateinit var auth: FirebaseAuth
+    private lateinit var firestore: FirebaseFirestore
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        firestore = FirebaseFirestore.getInstance()
         auth = FirebaseAuth.getInstance()
         val currentUser = auth.currentUser
         if (currentUser != null) {
@@ -107,11 +114,36 @@ class LoginActivity : AppCompatActivity() {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    Toast.makeText(this, "Registrasi berhasil!", Toast.LENGTH_SHORT).show()
-                    toggleLoginRegister(showLogin = true)
+                    val userId = auth.currentUser?.uid
+                    val name = registerBinding.editTextName.text.toString().trim()
+                    val phone = registerBinding.editTextTelp.text.toString().trim()
+
+                    val currentTime = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(
+                        Date()
+                    )
+
+                    val userData = hashMapOf(
+                        "name" to name,
+                        "email" to email,
+                        "phone" to phone,
+                        "createdAt" to currentTime
+                    )
+
+                    if (userId != null) {
+                        firestore.collection("users").document(userId).set(userData)
+                            .addOnSuccessListener {
+                                Toast.makeText(this, "Registrasi berhasil dan data disimpan!", Toast.LENGTH_SHORT).show()
+                                toggleLoginRegister(showLogin = true)
+                            }
+                            .addOnFailureListener { e ->
+                                Toast.makeText(this, "Gagal simpan data: ${e.message}", Toast.LENGTH_LONG).show()
+                            }
+                    }
+
                 } else {
                     Toast.makeText(this, "Registrasi gagal: ${task.exception?.message}", Toast.LENGTH_LONG).show()
                 }
             }
     }
+
 }
