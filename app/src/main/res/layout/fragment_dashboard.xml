@@ -129,7 +129,7 @@
                     android:contentDescription="Camera Button" />
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/analyzeButton"
+                    android:id="@+id/saveButton"
                     android:layout_width="0dp"
                     android:layout_height="56dp"
                     android:layout_marginStart="6dp"
