@@ -73,12 +73,8 @@ class DashboardFragment : Fragment() {
             binding.confidenceTextView.visibility = View.VISIBLE
             binding.labelTextView.text = label
             binding.confidenceTextView.text = "%.2f%%".format(confidence)
-            lastBitmap?.let {
-                // Kalau perlu, update UI lain kalau ada
-            }
         }
 
-        // Observe upload state
         viewModel.uploadState.observe(viewLifecycleOwner) {
             when (it) {
                 is UploadState.Loading -> {
@@ -102,13 +98,21 @@ class DashboardFragment : Fragment() {
         binding.intentButton.setOnClickListener { galleryLauncher.launch("image/*") }
 
         binding.saveButton.setOnClickListener {
+            val location = binding.editTextLocation.text.toString().trim()
+
+            if (location.isEmpty()) {
+                binding.editTextLocation.error = "Lokasi wajib diisi"
+                binding.editTextLocation.requestFocus()
+                return@setOnClickListener
+            }
+
             lastBitmap?.let { bitmap ->
-                val location = binding.editTextLocation.text.toString().trim()
                 viewModel.uploadImage(bitmap, location, requireContext())
             } ?: run {
                 Toast.makeText(requireContext(), "No image to upload!", Toast.LENGTH_SHORT).show()
             }
         }
+
 
     }
 
