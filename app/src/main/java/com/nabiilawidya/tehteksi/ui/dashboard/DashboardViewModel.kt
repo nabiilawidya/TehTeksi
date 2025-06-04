@@ -16,6 +16,7 @@ import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.util.Locale
 
 class DashboardViewModel : ViewModel() {
 
@@ -94,7 +95,7 @@ class DashboardViewModel : ViewModel() {
         imageUrl: String,
         location: String
     ) {
-        val roundedConfidence = String.format("%.2f", confidence).toDouble()
+        val roundedConfidence = String.format(Locale.US, "%.2f", confidence).toDouble()
 
         val data = hashMapOf(
             "label" to label,
