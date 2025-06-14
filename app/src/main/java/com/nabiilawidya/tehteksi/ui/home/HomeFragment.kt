@@ -5,14 +5,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.nabiilawidya.tehteksi.adapter.DiseaseAdapter
 import com.nabiilawidya.tehteksi.databinding.FragmentHomeBinding
 import com.nabiilawidya.tehteksi.ui.DiseaseActivity
+import com.nabiilawidya.tehteksi.ui.history.HistoryActivity
 
 class HomeFragment : Fragment() {
 
@@ -33,6 +32,11 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.recyclerViewPenyakit.layoutManager = LinearLayoutManager(requireContext())
+
+        binding.btnLihatHistori.setOnClickListener {
+            val intent = Intent(requireContext(), HistoryActivity::class.java)
+            startActivity(intent)
+        }
 
         viewModel.penyakitList.observe(viewLifecycleOwner) { list ->
             val adapter = DiseaseAdapter(list) { disease ->

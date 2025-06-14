@@ -24,10 +24,13 @@
         android:theme="@style/Theme.TehTeksi"
         tools:targetApi="31">
         <activity
+            android:name=".ui.detail.DetailActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.DiseaseActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.HistoryActivity"
+            android:name=".ui.history.HistoryActivity"
             android:exported="false" />
         <activity
             android:name=".ui.LoginActivity"
@@ -41,7 +44,7 @@
         <activity
             android:name=".ui.MainActivity"
             android:exported="false"
-            android:label="@string/app_name"></activity>
+            android:label="@string/app_name" />
     </application>
 
 </manifest>

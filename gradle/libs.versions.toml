@@ -50,3 +50,4 @@ okhttp-logging = { module = "com.squareup.okhttp3:logging-interceptor", version.
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 google-services = { id = "com.google.gms.google-services", version = "4.4.1" }
+kotlin-parcelize = { id = "kotlin-parcelize", version.ref = "kotlin" }

@@ -6,10 +6,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    tools:context=".ui.HistoryActivity"
+    tools:context=".ui.history.HistoryActivity"
     android:background="?android:attr/windowBackground">
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewPenyakit"
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
@@ -17,7 +17,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:nestedScrollingEnabled="false"
-        tools:listitem="@layout/item_penyakit"
+        tools:listitem="@layout/item_history"
         />
     <ProgressBar
         android:id="@+id/progressBar"
