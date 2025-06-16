@@ -1,20 +1,20 @@
 package com.nabiilawidya.tehteksi.adapter
 
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.nabiilawidya.tehteksi.data.History
 import com.nabiilawidya.tehteksi.databinding.ItemHistoryBinding
-import com.nabiilawidya.tehteksi.ui.detail.DetailActivity
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 class HistoryAdapter(
-    private var list: List<History>,
+    initialList: List<History>,
     private val onItemClick: (History) -> Unit
 ) : RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>() {
+
+    private val list = initialList.toMutableList()
 
     inner class HistoryViewHolder(val binding: ItemHistoryBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -44,7 +44,8 @@ class HistoryAdapter(
     }
 
     fun updateData(newList: List<History>) {
-        list = newList
+        list.clear()
+        list.addAll(newList)
         notifyDataSetChanged()
     }
 

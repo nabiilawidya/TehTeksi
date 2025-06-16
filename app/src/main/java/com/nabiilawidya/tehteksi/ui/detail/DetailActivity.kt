@@ -52,7 +52,9 @@ class DetailActivity : AppCompatActivity() {
                 finish()
             }
             .addOnFailureListener {
-                Toast.makeText(this, "Gagal hapus: ${it.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Gagal hapus: ${it.message}", Toast.LENGTH_LONG).show()
+                it.printStackTrace() // Tambahkan ini biar tahu errornya di logcat
             }
     }
+
 }

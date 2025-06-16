@@ -24,7 +24,7 @@ class HistoryActivity : AppCompatActivity() {
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == RESULT_OK) {
-            loadData() // refresh data setelah delete
+            loadData()
         }
     }
 
@@ -34,7 +34,9 @@ class HistoryActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         adapter = HistoryAdapter(classificationList) { history ->
-            openDetail(history)
+            val intent = Intent(this, DetailActivity::class.java)
+            intent.putExtra("history_data", history)
+            detailLauncher.launch(intent)
         }
 
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
@@ -60,7 +62,7 @@ class HistoryActivity : AppCompatActivity() {
             .addOnSuccessListener { result ->
                 classificationList.clear()
                 for (doc in result) {
-                    val item = doc.toObject(History::class.java)
+                    val item = doc.toObject(History::class.java).copy(id = doc.id)
                     classificationList.add(item)
                 }
                 adapter.updateData(classificationList)
