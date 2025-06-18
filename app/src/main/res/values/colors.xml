@@ -16,6 +16,7 @@
     <color name="whiteTextColor">#ffffff</color> <!-- White -->
     <color name="primaryTextColor">#4CAF50</color> <!-- Green -->
     <color name="loginBkColor">#E8F5E9</color> <!-- Light Green Background -->
+    <color name="dim_gray">#696969</color>
 
     <!--colros for card-->
     <color name="whiteCardColor">#fff</color>

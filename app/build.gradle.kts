@@ -66,4 +66,5 @@ dependencies {
     implementation(libs.firebase.firestore.ktx)
     implementation(libs.okhttp)
     implementation(libs.okhttp.logging)
+    implementation(libs.circleimageview)
 }

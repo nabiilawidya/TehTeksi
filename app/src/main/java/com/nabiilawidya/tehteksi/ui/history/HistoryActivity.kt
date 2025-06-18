@@ -2,6 +2,7 @@ package com.nabiilawidya.tehteksi.ui.history
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -34,9 +35,7 @@ class HistoryActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         adapter = HistoryAdapter(classificationList) { history ->
-            val intent = Intent(this, DetailActivity::class.java)
-            intent.putExtra("history_data", history)
-            detailLauncher.launch(intent)
+            openDetail(history)
         }
 
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
@@ -52,7 +51,10 @@ class HistoryActivity : AppCompatActivity() {
     }
 
     private fun loadData() {
+        binding.progressBar.visibility = View.VISIBLE  // TAMPILKAN LOADING
+
         val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+
         FirebaseFirestore.getInstance()
             .collection("users")
             .document(uid)
@@ -66,9 +68,11 @@ class HistoryActivity : AppCompatActivity() {
                     classificationList.add(item)
                 }
                 adapter.updateData(classificationList)
+                binding.progressBar.visibility = View.GONE
             }
             .addOnFailureListener {
                 Toast.makeText(this, "Gagal ambil data", Toast.LENGTH_SHORT).show()
+                binding.progressBar.visibility = View.GONE
             }
     }
 }

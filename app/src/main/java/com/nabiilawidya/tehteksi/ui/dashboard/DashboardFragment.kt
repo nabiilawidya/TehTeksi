@@ -29,34 +29,36 @@ class DashboardFragment : Fragment() {
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
     private var lastBitmap: Bitmap? = null
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentDashboardBinding.inflate(inflater, container, false)
         return binding.root
     }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel = ViewModelProvider(this)[DashboardViewModel::class.java]
-
         TFLiteModelHelper.init(requireContext())
 
+        setupPermissions()
+        setupLaunchers()
+        observeViewModel()
+        setupListeners()
+    }
+
+    private fun setupPermissions() {
         requestPermissionLauncher = registerForActivityResult(
             ActivityResultContracts.RequestPermission()
         ) { isGranted ->
             if (isGranted) openCamera()
             else Toast.makeText(requireContext(), "Camera permission denied", Toast.LENGTH_SHORT).show()
         }
+    }
 
+    private fun setupLaunchers() {
         cameraLauncher = registerForActivityResult(
             ActivityResultContracts.TakePicturePreview()
-        ) { bitmap ->
-            bitmap?.let { processImage(it) }
-        }
+        ) { bitmap -> bitmap?.let { processImage(it) } }
 
         galleryLauncher = registerForActivityResult(
             ActivityResultContracts.GetContent()
@@ -67,33 +69,43 @@ class DashboardFragment : Fragment() {
                 processImage(selectedImage)
             }
         }
+    }
 
+    private fun observeViewModel() {
         viewModel.classificationResult.observe(viewLifecycleOwner) { (label, confidence) ->
             binding.labelTextView.visibility = View.VISIBLE
             binding.confidenceTextView.visibility = View.VISIBLE
-            binding.labelTextView.text = label
             binding.confidenceTextView.text = "%.2f%%".format(confidence)
+
+            if (confidence < 50f) {
+                binding.labelTextView.text = "Daun tidak teridentifikasi"
+            } else {
+                binding.labelTextView.text = label
+                binding.saveButton.isEnabled = true
+            }
         }
 
         viewModel.uploadState.observe(viewLifecycleOwner) {
             when (it) {
-                is UploadState.Loading -> {
+                is DashboardViewModel.UploadState.Loading -> {
                     binding.saveButton.isEnabled = false
                     binding.saveButton.text = "Uploading..."
                 }
-                is UploadState.Success -> {
+                is DashboardViewModel.UploadState.Success -> {
                     Toast.makeText(requireContext(), it.msg, Toast.LENGTH_SHORT).show()
                     binding.saveButton.isEnabled = true
                     binding.saveButton.text = "Simpan"
                 }
-                is UploadState.Error -> {
+                is DashboardViewModel.UploadState.Error -> {
                     Toast.makeText(requireContext(), "Upload gagal: ${it.error}", Toast.LENGTH_SHORT).show()
                     binding.saveButton.isEnabled = true
                     binding.saveButton.text = "Simpan"
                 }
             }
         }
+    }
 
+    private fun setupListeners() {
         binding.cameraButton.setOnClickListener { checkCameraPermissionAndOpen() }
         binding.intentButton.setOnClickListener { galleryLauncher.launch("image/*") }
 
@@ -106,28 +118,26 @@ class DashboardFragment : Fragment() {
                 return@setOnClickListener
             }
 
+            val confidence = viewModel.classificationResult.value?.second ?: 0f
+            if (confidence < 50f) {
+                Toast.makeText(requireContext(), "Gambar tidak bisa disimpan karena tidak teridentifikasi", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             lastBitmap?.let { bitmap ->
                 viewModel.uploadImage(bitmap, location, requireContext())
-            } ?: run {
-                Toast.makeText(requireContext(), "No image to upload!", Toast.LENGTH_SHORT).show()
-            }
+            } ?: Toast.makeText(requireContext(), "No image to upload!", Toast.LENGTH_SHORT).show()
         }
-
-
     }
 
     private fun checkCameraPermissionAndOpen() {
         when {
-            ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.CAMERA
-            ) == android.content.pm.PackageManager.PERMISSION_GRANTED -> openCamera()
-
+            ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
+                    == android.content.pm.PackageManager.PERMISSION_GRANTED -> openCamera()
             shouldShowRequestPermissionRationale(Manifest.permission.CAMERA) -> {
                 Toast.makeText(requireContext(), "Camera permission is needed to take pictures", Toast.LENGTH_SHORT).show()
                 requestPermissionLauncher.launch(Manifest.permission.CAMERA)
             }
-
             else -> requestPermissionLauncher.launch(Manifest.permission.CAMERA)
         }
     }
@@ -141,7 +151,6 @@ class DashboardFragment : Fragment() {
         lastBitmap = bitmap
         viewModel.classifyImage(bitmap)
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

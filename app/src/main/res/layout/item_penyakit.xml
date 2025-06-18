@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     card_view:cardCornerRadius="12dp"
-    android:backgroundTint="#fff"
+    android:background="?android:attr/windowBackground"
     android:layout_marginBottom="8dp">
 
     <LinearLayout
@@ -14,7 +14,7 @@
         android:padding="8dp"
         android:gravity="center_vertical">
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/imgPenyakit"
             android:layout_width="50dp"
             android:layout_height="50dp"

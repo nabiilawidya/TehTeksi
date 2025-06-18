@@ -1,5 +1,6 @@
 package com.nabiilawidya.tehteksi.ui.dashboard
 
+import android.content.Context
 import android.graphics.Bitmap
 import androidx.lifecycle.*
 import com.google.firebase.auth.FirebaseAuth
@@ -31,11 +32,7 @@ class DashboardViewModel : ViewModel() {
         _classificationResult.postValue(label to confidence)
     }
 
-    fun uploadImage(
-        bitmap: Bitmap,
-        location: String,
-        context: android.content.Context
-    ) {
+    fun uploadImage(bitmap: Bitmap, location: String, context: Context) {
         _uploadState.postValue(UploadState.Loading)
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -56,19 +53,14 @@ class DashboardViewModel : ViewModel() {
         }
     }
 
-
-    private fun saveBitmapToCache(bitmap: Bitmap, context: android.content.Context): File {
+    private fun saveBitmapToCache(bitmap: Bitmap, context: Context): File {
         val file = File(context.cacheDir, "temp_image.jpg")
-        val outputStream = FileOutputStream(file)
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-        outputStream.flush()
-        outputStream.close()
+        FileOutputStream(file).use { bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it) }
         return file
     }
 
     private fun uploadToCloudinary(file: File): String {
         val client = OkHttpClient()
-
         val requestBody = MultipartBody.Builder()
             .setType(MultipartBody.FORM)
             .addFormDataPart("file", file.name, file.asRequestBody("image/*".toMediaTypeOrNull()))
@@ -88,15 +80,8 @@ class DashboardViewModel : ViewModel() {
         }
     }
 
-    private fun saveToFirestore(
-        userId: String,
-        label: String,
-        confidence: Double,
-        imageUrl: String,
-        location: String
-    ) {
+    private fun saveToFirestore(userId: String, label: String, confidence: Double, imageUrl: String, location: String) {
         val roundedConfidence = String.format(Locale.US, "%.2f", confidence).toDouble()
-
         val data = hashMapOf(
             "label" to label,
             "confidence" to roundedConfidence,
@@ -104,16 +89,17 @@ class DashboardViewModel : ViewModel() {
             "location" to location,
             "timestamp" to FieldValue.serverTimestamp()
         )
+
         FirebaseFirestore.getInstance()
             .collection("users")
             .document(userId)
             .collection("classifications")
             .add(data)
     }
-}
+    sealed class UploadState {
+        object Loading : UploadState()
+        data class Success(val msg: String) : UploadState()
+        data class Error(val error: String) : UploadState()
+    }
 
-sealed class UploadState {
-    object Loading : UploadState()
-    data class Success(val msg: String) : UploadState()
-    data class Error(val error: String) : UploadState()
 }

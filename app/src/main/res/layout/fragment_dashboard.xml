@@ -51,8 +51,7 @@
                         android:layout_height="wrap_content"
                         android:text="Penyakit: -"
                         android:textStyle="bold"
-                        android:textSize="18sp"
-                        android:textColor="@android:color/black" />
+                        android:textSize="18sp" />
 
                     <TextView
                         android:id="@+id/confidenceTextView"
@@ -60,8 +59,7 @@
                         android:layout_height="wrap_content"
                         android:text="Akurasi: -%"
                         android:textSize="14sp"
-                        android:layout_marginTop="4dp"
-                        android:textColor="@android:color/darker_gray" />
+                        android:layout_marginTop="4dp" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -112,6 +110,7 @@
                     android:layout_height="56dp"
                     app:cornerRadius="12dp"
                     app:icon="@drawable/ic_upload"
+                    app:iconTint="@android:color/white"
                     app:iconSize="28dp"
                     app:backgroundTint="@color/colorPrimary"
                     android:contentDescription="Upload Button" />
@@ -125,7 +124,6 @@
                     app:icon="@drawable/ic_camera"
                     app:iconTint="@android:color/white"
                     app:iconSize="28dp"
-                    app:backgroundTint="@color/colorPrimary"
                     android:contentDescription="Camera Button" />
 
                 <com.google.android.material.button.MaterialButton
@@ -139,19 +137,8 @@
                     android:textSize="15sp"
                     app:cornerRadius="12dp"
                     app:iconPadding="8dp"
-                    app:backgroundTint="@color/colorPrimary"
                     android:contentDescription="Simpan Button" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
