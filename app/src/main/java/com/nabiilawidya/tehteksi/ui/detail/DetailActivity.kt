@@ -28,10 +28,10 @@ class DetailActivity : AppCompatActivity() {
     }
 
     private fun showDetail() {
-        binding.tvLabel.text = "Penyakit: ${history.label}"
-        binding.tvConfidence.text = "Confidence: %.2f%%".format(history.confidence)
-        binding.tvLocation.text = "Lokasi: ${history.location}"
-        binding.tvTimestamp.text = "Waktu: ${history.timestamp?.toDate()}"
+        binding.tvLabel.text = history.label
+        binding.tvConfidence.text = "%.2f%%".format(history.confidence)
+        binding.tvLocation.text = history.location
+        binding.tvTimestamp.text = history.timestamp?.toDate().toString()
 
         Glide.with(this)
             .load(history.imageUrl)
@@ -53,7 +53,7 @@ class DetailActivity : AppCompatActivity() {
             }
             .addOnFailureListener {
                 Toast.makeText(this, "Gagal hapus: ${it.message}", Toast.LENGTH_LONG).show()
-                it.printStackTrace() // Tambahkan ini biar tahu errornya di logcat
+                it.printStackTrace()
             }
     }
 
