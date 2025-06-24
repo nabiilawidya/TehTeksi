@@ -14,7 +14,7 @@ object TFLiteModelHelper {
 
     private lateinit var interpreter: Interpreter
     private val teaLabels: Array<String> = teaLeafLabels
-    private const val MODEL_NAME = "MobileNetV2.tflite"
+    private const val MODEL_NAME = "MobileNetV2final.tflite"
     private const val INPUT_SIZE = 224
 
     fun init(context: Context) {
