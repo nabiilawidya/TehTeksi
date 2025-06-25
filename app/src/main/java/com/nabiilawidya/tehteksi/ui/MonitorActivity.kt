@@ -1,5 +1,6 @@
 package com.nabiilawidya.tehteksi.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -15,6 +16,8 @@ import com.nabiilawidya.tehteksi.R
 import com.nabiilawidya.tehteksi.adapter.MonitorAdapter
 import com.nabiilawidya.tehteksi.data.Classification
 import com.nabiilawidya.tehteksi.databinding.ActivityMonitorBinding
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class MonitorActivity : AppCompatActivity() {
 
@@ -27,7 +30,12 @@ class MonitorActivity : AppCompatActivity() {
         binding = ActivityMonitorBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        adapter = MonitorAdapter(classificationList)
+        adapter = MonitorAdapter(classificationList) { selectedItem ->
+            val intent = Intent(this, DetailMonitorActivity::class.java)
+            intent.putExtra("classification", selectedItem)
+            startActivity(intent)
+        }
+
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
 
@@ -47,7 +55,14 @@ class MonitorActivity : AppCompatActivity() {
                     val data = doc.data
                     val label = data["label"] as? String ?: "-"
                     val imageUrl = data["imageUrl"] as? String ?: ""
-                    val timestamp = data["timestamp"]?.toString() ?: "-"
+                    val timestampObj = data["timestamp"]
+                    val timestamp = if (timestampObj is com.google.firebase.Timestamp) {
+                        val date = timestampObj.toDate()
+                        val sdf = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault())
+                        sdf.format(date)
+                    } else {
+                        "-"
+                    }
                     val confidence = (data["confidence"] as? Number)?.toDouble() ?: 0.0
                     val location = data["location"] as? String ?: "-"
                     val path = doc.reference.path

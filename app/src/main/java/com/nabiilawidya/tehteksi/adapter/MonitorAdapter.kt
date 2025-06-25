@@ -7,8 +7,10 @@ import com.bumptech.glide.Glide
 import com.nabiilawidya.tehteksi.data.Classification
 import com.nabiilawidya.tehteksi.databinding.ItemMonitorBinding
 
-class MonitorAdapter(private val list: List<Classification>) :
-    RecyclerView.Adapter<MonitorAdapter.MonitorViewHolder>() {
+class MonitorAdapter(
+    private val list: List<Classification>,
+    private val onItemClick: (Classification) -> Unit
+) : RecyclerView.Adapter<MonitorAdapter.MonitorViewHolder>() {
 
     inner class MonitorViewHolder(val binding: ItemMonitorBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -29,6 +31,11 @@ class MonitorAdapter(private val list: List<Classification>) :
         Glide.with(holder.itemView.context)
             .load(item.imageUrl)
             .into(b.imgHistory)
+
+        holder.itemView.setOnClickListener {
+            onItemClick(item)
+        }
+
     }
 
     override fun getItemCount(): Int = list.size
