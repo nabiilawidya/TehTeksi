@@ -42,13 +42,34 @@
                     android:textColor="#000000"
                     android:layout_marginBottom="16dp" />
 
-                <Button
-                    android:id="@+id/btnLihatHistori"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Lihat Histori"
-                    android:backgroundTint="#3B883B"
-                    android:textColor="#FFFFFF" />
+                    android:orientation="horizontal"
+                    android:layout_marginHorizontal="8dp">
+
+                    <Button
+                        android:id="@+id/btnLihatHistori"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Lihat Histori"
+                        android:backgroundTint="#3B883B"
+                        android:textColor="#FFFFFF" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <Button
+                        android:id="@+id/btnMonitor"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Monitoring"
+                        android:backgroundTint="#3B883B"
+                        android:textColor="#FFFFFF" />
+                </LinearLayout>
+
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 

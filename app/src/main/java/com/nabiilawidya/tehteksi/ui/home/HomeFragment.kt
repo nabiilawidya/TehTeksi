@@ -5,12 +5,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.nabiilawidya.tehteksi.adapter.DiseaseAdapter
 import com.nabiilawidya.tehteksi.databinding.FragmentHomeBinding
 import com.nabiilawidya.tehteksi.ui.DiseaseActivity
+import com.nabiilawidya.tehteksi.ui.MonitorActivity
 import com.nabiilawidya.tehteksi.ui.history.HistoryActivity
 
 class HomeFragment : Fragment() {
@@ -36,6 +39,18 @@ class HomeFragment : Fragment() {
         binding.btnLihatHistori.setOnClickListener {
             val intent = Intent(requireContext(), HistoryActivity::class.java)
             startActivity(intent)
+        }
+
+        val sharedPref = requireContext().getSharedPreferences("UserSession", AppCompatActivity.MODE_PRIVATE)
+        val role = sharedPref.getString("role", "user")
+
+        binding.btnMonitor.setOnClickListener {
+            if (role == "manager") {
+                val intent = Intent(requireContext(), MonitorActivity::class.java)
+                startActivity(intent)
+            } else {
+                Toast.makeText(requireContext(), "Akses hanya untuk manager", Toast.LENGTH_SHORT).show()
+            }
         }
 
         viewModel.penyakitList.observe(viewLifecycleOwner) { list ->

@@ -24,6 +24,9 @@
         android:theme="@style/Theme.TehTeksi"
         tools:targetApi="31">
         <activity
+            android:name=".ui.MonitorActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.detail.DetailActivity"
             android:exported="false" />
         <activity

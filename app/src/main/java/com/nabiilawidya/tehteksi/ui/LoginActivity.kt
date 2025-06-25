@@ -2,6 +2,7 @@ package com.nabiilawidya.tehteksi.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -21,7 +22,6 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var registerBinding: LayoutRegisterBinding
     private lateinit var auth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -101,11 +101,34 @@ class LoginActivity : AppCompatActivity() {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    Toast.makeText(this, "Login berhasil!", Toast.LENGTH_SHORT).show()
-                    startActivity(Intent(this, MainActivity::class.java))
-                    finish()
+                    val uid = auth.currentUser?.uid
+                    Log.d("DEBUG_UID", "UID yang login: $uid")
+
+                    if (uid != null) {
+                        auth.currentUser?.getIdToken(true)
+                            ?.addOnSuccessListener { result ->
+                                val claims = result.claims
+                                val roleFromClaim = claims["role"] as? String
+                                Log.d("DEBUG_CLAIM", "Custom claim role: $roleFromClaim")
+
+                                val sharedPref = getSharedPreferences("UserSession", MODE_PRIVATE)
+                                with(sharedPref.edit()) {
+                                    putString("role", roleFromClaim ?: "user")
+                                    apply()
+                                }
+
+                                Toast.makeText(this, "Login sebagai ${roleFromClaim ?: "user"}", Toast.LENGTH_SHORT).show()
+                                startActivity(Intent(this, MainActivity::class.java))
+                                finish()
+                            }
+                            ?.addOnFailureListener {
+                                Toast.makeText(this, "Gagal ambil custom claims: ${it.message}", Toast.LENGTH_LONG).show()
+                                Log.e("DEBUG_CLAIM", "Gagal ambil claims: ${it.message}")
+                            }
+                    }
                 } else {
                     Toast.makeText(this, "Login gagal: ${task.exception?.message}", Toast.LENGTH_LONG).show()
+                    Log.e("DEBUG_LOGIN", "Login gagal: ${task.exception?.message}")
                 }
             }
     }
@@ -126,6 +149,7 @@ class LoginActivity : AppCompatActivity() {
                         "name" to name,
                         "email" to email,
                         "phone" to phone,
+                        "role" to "user",
                         "createdAt" to currentTime
                     )
 

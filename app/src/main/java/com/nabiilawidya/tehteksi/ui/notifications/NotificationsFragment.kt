@@ -30,6 +30,7 @@ class NotificationsFragment : Fragment() {
             binding.textViewEmailValue.text = user.email
             binding.textViewPhoneValue.text = user.phone
             binding.textViewCreatedAtValue.text = user.createdAt
+            binding.textViewRoleValue.text = user.role
         }
 
         viewModel.loadUserData()
