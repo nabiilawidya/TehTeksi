@@ -88,7 +88,6 @@
                         android:minHeight="44dp"
                         android:paddingVertical="8dp"
                         android:paddingHorizontal="12dp"
-                        android:textColor="#212121"
                         android:textSize="15sp"
                         android:background="@android:color/transparent"
                         android:inputType="text" />
