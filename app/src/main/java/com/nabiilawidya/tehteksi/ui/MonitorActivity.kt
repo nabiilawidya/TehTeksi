@@ -2,6 +2,9 @@ package com.nabiilawidya.tehteksi.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -39,7 +42,48 @@ class MonitorActivity : AppCompatActivity() {
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
 
+        setupSpinner()
         fetchAllClassifications()
+    }
+
+    private fun setupSpinner() {
+        val options = arrayOf(
+            "Timestamp (Terbaru)",
+            "Timestamp (Terlama)",
+            "Lokasi (A-Z)",
+            "Lokasi (Z-A)"
+        )
+        val spinnerAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, options)
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.spinnerSort.adapter = spinnerAdapter
+
+        binding.spinnerSort.setSelection(0)
+
+        binding.spinnerSort.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                sortData(position)
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+    }
+
+    private fun sortData(position: Int) {
+        val sdf = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault())
+
+        when (position) {
+            0 -> classificationList.sortByDescending { sdf.parse(it.timestamp) }
+            1 -> classificationList.sortBy { sdf.parse(it.timestamp) }
+            2 -> classificationList.sortBy { it.location.lowercase(Locale.getDefault()) }
+            3 -> classificationList.sortByDescending { it.location.lowercase(Locale.getDefault()) }
+        }
+
+        adapter.notifyDataSetChanged()
     }
 
     private fun fetchAllClassifications() {
@@ -82,7 +126,7 @@ class MonitorActivity : AppCompatActivity() {
                             )
 
                             classificationList.add(classification)
-                            adapter.notifyDataSetChanged()
+                            sortData(binding.spinnerSort.selectedItemPosition)
                         }
 
                     tasks.add(task)
