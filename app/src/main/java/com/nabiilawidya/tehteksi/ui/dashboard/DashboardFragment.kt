@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,10 +13,15 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.nabiilawidya.tehteksi.databinding.FragmentDashboardBinding
 import com.nabiilawidya.tehteksi.helper.TFLiteModelHelper
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 
 class DashboardFragment : Fragment() {
@@ -24,10 +30,13 @@ class DashboardFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var viewModel: DashboardViewModel
-    private lateinit var cameraLauncher: ActivityResultLauncher<Void?>
+    private lateinit var cameraLauncher: ActivityResultLauncher<Uri>
     private lateinit var galleryLauncher: ActivityResultLauncher<String>
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
+
     private var lastBitmap: Bitmap? = null
+    private lateinit var photoUri: Uri
+    private lateinit var photoFile: File
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentDashboardBinding.inflate(inflater, container, false)
@@ -56,9 +65,17 @@ class DashboardFragment : Fragment() {
     }
 
     private fun setupLaunchers() {
+        // 🔁 Gunakan resolusi penuh dari kamera
         cameraLauncher = registerForActivityResult(
-            ActivityResultContracts.TakePicturePreview()
-        ) { bitmap -> bitmap?.let { processImage(it) } }
+            ActivityResultContracts.TakePicture()
+        ) { success ->
+            if (success) {
+                val bitmap = BitmapFactory.decodeFile(photoFile.absolutePath)
+                bitmap?.let { processImage(it) }
+            } else {
+                Toast.makeText(requireContext(), "Gagal mengambil gambar", Toast.LENGTH_SHORT).show()
+            }
+        }
 
         galleryLauncher = registerForActivityResult(
             ActivityResultContracts.GetContent()
@@ -143,7 +160,19 @@ class DashboardFragment : Fragment() {
     }
 
     private fun openCamera() {
-        cameraLauncher.launch(null)
+        photoFile = createImageFile()
+        photoUri = FileProvider.getUriForFile(
+            requireContext(),
+            "${requireContext().packageName}.fileprovider",
+            photoFile
+        )
+        cameraLauncher.launch(photoUri)
+    }
+
+    private fun createImageFile(): File {
+        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val storageDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        return File.createTempFile("IMG_${timeStamp}_", ".jpg", storageDir)
     }
 
     private fun processImage(bitmap: Bitmap) {

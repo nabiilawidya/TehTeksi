@@ -55,9 +55,12 @@ class DashboardViewModel : ViewModel() {
 
     private fun saveBitmapToCache(bitmap: Bitmap, context: Context): File {
         val file = File(context.cacheDir, "temp_image.jpg")
-        FileOutputStream(file).use { bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it) }
+        FileOutputStream(file).use {
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, it)
+        }
         return file
     }
+
 
     private fun uploadToCloudinary(file: File): String {
         val client = OkHttpClient()
@@ -101,5 +104,4 @@ class DashboardViewModel : ViewModel() {
         data class Success(val msg: String) : UploadState()
         data class Error(val error: String) : UploadState()
     }
-
 }
