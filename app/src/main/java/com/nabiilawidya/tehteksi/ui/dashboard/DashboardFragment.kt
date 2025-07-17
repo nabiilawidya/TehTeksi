@@ -77,7 +77,7 @@ class DashboardFragment : Fragment() {
             binding.confidenceTextView.visibility = View.VISIBLE
             binding.confidenceTextView.text = "%.2f%%".format(confidence)
 
-            if (confidence < 50f) {
+            if (confidence < 70f) {
                 binding.labelTextView.text = "Daun tidak teridentifikasi"
             } else {
                 binding.labelTextView.text = label
@@ -119,7 +119,7 @@ class DashboardFragment : Fragment() {
             }
 
             val confidence = viewModel.classificationResult.value?.second ?: 0f
-            if (confidence < 50f) {
+            if (confidence < 70f) {
                 Toast.makeText(requireContext(), "Gambar tidak bisa disimpan karena tidak teridentifikasi", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }

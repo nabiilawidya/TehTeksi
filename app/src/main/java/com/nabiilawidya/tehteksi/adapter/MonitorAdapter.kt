@@ -27,6 +27,7 @@ class MonitorAdapter(
         b.tvHistoriPenyakit.text = "${item.label} (${String.format("%.2f", item.confidence)}%)"
         b.tvUser.text = item.userName
         b.tvTimestamp.text = item.timestamp
+        b.tvLocation.text = item.location
 
         Glide.with(holder.itemView.context)
             .load(item.imageUrl)
