@@ -65,7 +65,6 @@ class DashboardFragment : Fragment() {
     }
 
     private fun setupLaunchers() {
-        // 🔁 Gunakan resolusi penuh dari kamera
         cameraLauncher = registerForActivityResult(
             ActivityResultContracts.TakePicture()
         ) { success ->

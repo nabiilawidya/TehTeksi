@@ -40,7 +40,6 @@ class LoginActivity : AppCompatActivity() {
 
         loginBinding = LayoutLoginBinding.bind(binding.layoutLogin.root)
         registerBinding = LayoutRegisterBinding.bind(binding.layoutRegister.root)
-        auth = FirebaseAuth.getInstance()
 
         loginBinding.cirLoginButton.setOnClickListener {
             val email = loginBinding.editTextEmail.text.toString().trim()

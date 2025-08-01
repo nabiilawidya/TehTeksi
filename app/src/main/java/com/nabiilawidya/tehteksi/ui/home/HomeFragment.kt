@@ -56,10 +56,7 @@ class HomeFragment : Fragment() {
         viewModel.penyakitList.observe(viewLifecycleOwner) { list ->
             val adapter = DiseaseAdapter(list) { disease ->
                 val intent = Intent(requireContext(), DiseaseActivity::class.java).apply {
-                    putExtra("nama", disease.nama)
-                    putExtra("deskripsi", disease.deskripsi)
-                    putExtra("gambar_url", disease.gambar_url)
-                    putExtra("solusi", disease.solusi)
+                    putExtra("disease", disease) 
                 }
                 startActivity(intent)
             }

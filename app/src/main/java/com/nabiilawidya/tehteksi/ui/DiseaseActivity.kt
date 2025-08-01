@@ -1,11 +1,18 @@
 package com.nabiilawidya.tehteksi.ui
 
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.google.firebase.firestore.FirebaseFirestore
+import com.nabiilawidya.tehteksi.adapter.SolusiAdapter
+import com.nabiilawidya.tehteksi.data.Disease
+import com.nabiilawidya.tehteksi.data.SolusiItem
 import com.nabiilawidya.tehteksi.databinding.ActivityDiseaseBinding
 
 class DiseaseActivity : AppCompatActivity() {
@@ -25,16 +32,18 @@ class DiseaseActivity : AppCompatActivity() {
             insets
         }
 
-        val nama = intent.getStringExtra("nama")
-        val deskripsi = intent.getStringExtra("deskripsi")
-        val gambarUrl = intent.getStringExtra("gambar_url")
-        val solusi = intent.getStringExtra("solusi")
+        val disease = intent.getParcelableExtra<Disease>("disease") ?: return
 
-        binding.tvNama.text = nama
-        binding.tvDeskripsi.text = deskripsi
-        binding.tvSolusi.text = solusi
+        binding.tvNama.text = disease.nama
+        binding.tvDeskripsi.text = disease.deskripsi
+
         Glide.with(this)
-            .load(gambarUrl)
+            .load(disease.gambar_url)
             .into(binding.imgFull)
+
+        val adapter = SolusiAdapter(disease.solusi)
+        binding.recyclerViewSolusi.layoutManager = LinearLayoutManager(this)
+        binding.recyclerViewSolusi.adapter = adapter
     }
+
 }
