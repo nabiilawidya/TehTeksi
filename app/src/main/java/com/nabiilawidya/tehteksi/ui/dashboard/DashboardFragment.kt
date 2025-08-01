@@ -1,11 +1,13 @@
 package com.nabiilawidya.tehteksi.ui.dashboard
 
 import android.Manifest
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,8 +18,11 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.google.firebase.firestore.FirebaseFirestore
+import com.nabiilawidya.tehteksi.data.Disease
 import com.nabiilawidya.tehteksi.databinding.FragmentDashboardBinding
 import com.nabiilawidya.tehteksi.helper.TFLiteModelHelper
+import com.nabiilawidya.tehteksi.ui.DiseaseActivity
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -95,10 +100,27 @@ class DashboardFragment : Fragment() {
 
             if (confidence < 70f) {
                 binding.labelTextView.text = "Daun tidak teridentifikasi"
+                binding.btnInfo.visibility = View.GONE
             } else {
                 binding.labelTextView.text = label
                 binding.saveButton.isEnabled = true
+
+                val db = FirebaseFirestore.getInstance()
+                db.collection("disease")
+                    .whereEqualTo("nama", label)
+                    .get()
+                    .addOnSuccessListener { result ->
+                        if (!result.isEmpty) {
+                            binding.btnInfo.visibility = View.VISIBLE
+                        } else {
+                            binding.btnInfo.visibility = View.GONE
+                        }
+                    }
+                    .addOnFailureListener {
+                        binding.btnInfo.visibility = View.GONE
+                    }
             }
+
         }
 
         viewModel.uploadState.observe(viewLifecycleOwner) {
@@ -117,8 +139,12 @@ class DashboardFragment : Fragment() {
                     binding.saveButton.isEnabled = true
                     binding.saveButton.text = "Simpan"
                 }
+                else -> {
+                    Log.w("UploadState", "Unhandled state: $it")
+                }
             }
         }
+
     }
 
     private fun setupListeners() {
@@ -144,6 +170,35 @@ class DashboardFragment : Fragment() {
                 viewModel.uploadImage(bitmap, location, requireContext())
             } ?: Toast.makeText(requireContext(), "No image to upload!", Toast.LENGTH_SHORT).show()
         }
+        binding.btnInfo.setOnClickListener {
+            val label = viewModel.classificationResult.value?.first
+            if (label.isNullOrEmpty()) {
+                Toast.makeText(requireContext(), "Belum ada hasil klasifikasi", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val db = FirebaseFirestore.getInstance()
+            db.collection("disease")
+                .whereEqualTo("nama", label)
+                .get()
+                .addOnSuccessListener { result ->
+                    if (!result.isEmpty) {
+                        val document = result.documents[0]
+                        val disease = document.toObject(Disease::class.java)
+                        if (disease != null) {
+                            val intent = Intent(requireContext(), DiseaseActivity::class.java)
+                            intent.putExtra("disease", disease)
+                            startActivity(intent)
+                        }
+                    } else {
+                        Toast.makeText(requireContext(), "Data tidak ditemukan di database", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                .addOnFailureListener {
+                    Toast.makeText(requireContext(), "Gagal mengambil data", Toast.LENGTH_SHORT).show()
+                }
+        }
+
     }
 
     private fun checkCameraPermissionAndOpen() {

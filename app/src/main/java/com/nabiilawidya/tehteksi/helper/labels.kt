@@ -2,7 +2,7 @@ package com.nabiilawidya.tehteksi.helper
 
 object labels {
     val teaLeafLabels = arrayOf(
-        "Tea algal leaf spot",
+        "Algal Leaf Spot",
         "Brown Blight",
         "Gray Blight",
         "Helopeltis",
